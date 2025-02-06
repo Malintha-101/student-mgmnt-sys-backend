@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-StumgtApplication<stumgt>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.malintha.stumgt.StumgtApplication",
+            "projectName": "stumgt",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.malintha.stumgt.dto.course.CourseDTO;
 import com.malintha.stumgt.model.Course;
 import com.malintha.stumgt.repository.CourseRepository;
 
@@ -15,8 +16,9 @@ public class CourseService {
     private CourseRepository courseRepository;
 
     // get all courses
-    public List<Course> getAllCourses() {
-        return courseRepository.findAll();
+    public List<CourseDTO> getAllCourses() {
+        List<Course> courses = courseRepository.findAll();
+        return courses.stream().map(this::mapToCourseDTO).toList();
     }
 
     // create course
@@ -37,5 +39,9 @@ public class CourseService {
     // delete course
     public void deleteCourse(Long id) {
         courseRepository.deleteById(id);
+    }
+
+    private CourseDTO mapToCourseDTO(Course course) {
+        return new CourseDTO(course.getId(), course.getName(), course.getDescription(), course.getDuration());
     }
 }

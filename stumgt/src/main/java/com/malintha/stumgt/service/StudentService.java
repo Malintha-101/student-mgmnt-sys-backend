@@ -16,6 +16,7 @@ public class StudentService {
     @Autowired
     private StudentRepository studentRepository;
 
+    // get all students
     public List<StudentDTO> getAllStudents() {
         List<Student> students = studentRepository.findAll();
         return students.stream().map(this::mapToStudentDTO).toList();

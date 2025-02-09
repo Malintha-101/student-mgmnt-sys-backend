@@ -29,7 +29,7 @@ public class BatchController {
     }
 
     // get all batches
-    @PostMapping("/all")
+    @GetMapping("/all")
     public List<Batch> getAllBatches(){
         return batchService.getAllBatches();
     }

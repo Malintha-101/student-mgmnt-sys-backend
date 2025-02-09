@@ -3,9 +3,11 @@ package com.malintha.stumgt.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.malintha.stumgt.dto.student.StudentDTO;
 import com.malintha.stumgt.model.Student;
 import com.malintha.stumgt.service.StudentService;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,8 +27,9 @@ public class StudentController {
 
     // get all students
     @GetMapping("/all")
-    public List<Student> getAllStudents() {
-        return studentService.getAllStudents();
+    public ResponseEntity<List<StudentDTO>> getAllStudents() {
+        List<StudentDTO> students = studentService.getAllStudents();
+        return ResponseEntity.ok(students);
     }
     
     // create student

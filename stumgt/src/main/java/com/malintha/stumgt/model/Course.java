@@ -36,7 +36,7 @@ public class Course {
     private String description;
 
     @Column(nullable = false)
-    private String duration;
+    private int duration;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;

@@ -33,7 +33,7 @@ public class BatchController {
 
     // get all batches
     @GetMapping("/all")
-    public ResponseEntity<List<BatchDTO>> getAllBatches() {
+    public ResponseEntity<List<BatchDTO>> getAllEntrollments() {
         List<BatchDTO> batches = batchService.getAllBatches();
         return ResponseEntity.ok(batches);
     }

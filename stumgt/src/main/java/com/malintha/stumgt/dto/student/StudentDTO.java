@@ -1,5 +1,7 @@
 package com.malintha.stumgt.dto.student;
 
+import java.time.LocalDate;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -10,6 +12,6 @@ public class StudentDTO {
     private String name;
     private String email;
     private String address;
-    private String dob;
+    private LocalDate dob;
     private String phone;
 }

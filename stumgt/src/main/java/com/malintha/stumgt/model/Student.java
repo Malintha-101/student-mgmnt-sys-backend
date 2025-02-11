@@ -11,6 +11,8 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -45,7 +47,7 @@ public class Student {
 
     @NonNull
     @Column(nullable = false)
-    private String dob;
+    private LocalDate dob;
 
     private String phone;
 

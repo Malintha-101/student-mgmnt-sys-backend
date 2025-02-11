@@ -19,23 +19,21 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "entrollements")
-
 public class Entrollement {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
-    private LocalDate entrolledDate;
+    private LocalDate enrolledDate;
 
-    //many entrollment refers to one student
+    // many entrollments refer to one student
     @ManyToOne
     @JoinColumn(name = "student_id")
     private Student student;
 
-    //many entrollment refers to one batch
+    // many entrollments refer to one batch
     @ManyToOne
     @JoinColumn(name = "batch_id")
     private Batch batch;
-
 }

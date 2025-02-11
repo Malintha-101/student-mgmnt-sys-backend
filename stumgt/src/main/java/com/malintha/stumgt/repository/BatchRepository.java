@@ -6,6 +6,5 @@ import org.springframework.stereotype.Repository;
 import com.malintha.stumgt.model.Batch;
 
 @Repository
-public interface BatchRepository extends JpaRepository<Batch, Long>{
-
+public interface BatchRepository extends JpaRepository<Batch, Long> {
 }

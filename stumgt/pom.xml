@@ -26,9 +26,24 @@
         <tag/>
         <url/>
     </scm>
+
     <properties>
         <java.version>21</java.version>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <sonar.java.binaries>target/classes</sonar.java.binaries>
+        <sonar.sources>src/main/java</sonar.sources>
+        <sonar.tests>src/test/java</sonar.tests>
+        <sonar.log.level>true</sonar.log.level>
+        <junit.version>5.8.1</junit.version>
+        <sonar.language>java</sonar.language>
+        <sonar.token>sqp_eb8134e5464d94e106433296fb33de21807cc67e</sonar.token>
+        <sonar.projectKey>Malintha-101_student-mgmnt-sys-backend_af8275b5-4a1c-4b3c-a095-39a350e2a231</sonar.projectKey>
+        <sonar.projectName>student-mgmnt-sys-backend</sonar.projectName>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>

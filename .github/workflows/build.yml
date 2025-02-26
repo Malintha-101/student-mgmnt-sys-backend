@@ -46,10 +46,17 @@ jobs:
             echo "Waiting for SonarQube to be ready..."
             sleep 10
           done
+      - name: Print SonarQube server status
+        run: |
+          curl -s "http://localhost:9000/api/system/status"
       - name: Load environment variables
         run: |
           echo "SONAR_TOKEN=${{ secrets.SONAR_TOKEN }}" >> $GITHUB_ENV
           echo "SONAR_HOST_URL=${{ secrets.SONAR_HOST_URL }}" >> $GITHUB_ENV
+      - name: Print environment variables
+        run: |
+          echo "SONAR_TOKEN=${{ secrets.SONAR_TOKEN }}"
+          echo "SONAR_HOST_URL=${{ secrets.SONAR_HOST_URL }}"
       - name: Build and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

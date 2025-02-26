@@ -104,6 +104,18 @@
                 <groupId>org.sonarsource.scanner.maven</groupId>
                 <artifactId>sonar-maven-plugin</artifactId>
                 <version>5.0.0.4389</version>
+                <configuration>
+                    <properties>
+                        <property>
+                            <name>sonar.login</name>
+                            <value>${env.SONAR_TOKEN}</value>
+                        </property>
+                        <property>
+                            <name>sonar.host.url</name>
+                            <value>${env.SONAR_HOST_URL}</value>
+                        </property>
+                    </properties>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

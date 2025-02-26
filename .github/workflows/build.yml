@@ -31,10 +31,14 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
+      - name: Start SonarQube server
+        run: |
+          docker run -d --name sonarqube -p 9000:9000 sonarqube:latest
+          sleep 60  # Wait for SonarQube to start
       - name: Build and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          SONAR_HOST_URL: http://localhost:9000
         run: |
           cd stumgt
           mvn -T 1C -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Malintha-101_student-mgmnt-sys-backend_af8275b5-4a1c-4b3c-a095-39a350e2a231 -Dsonar.projectName='student-mgmnt-sys-backend'

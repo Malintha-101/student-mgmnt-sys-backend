@@ -50,12 +50,3 @@ networks:
   ipv4:
     driver: bridge
     enable_ipv6: false
-  dual:
-    driver: bridge
-    enable_ipv6: true
-    ipam:
-      config:
-        - subnet: "192.168.2.0/24"
-          gateway: "192.168.2.1"
-        - subnet: "2001:db8:2::/64"
-          gateway: "2001:db8:2::1"

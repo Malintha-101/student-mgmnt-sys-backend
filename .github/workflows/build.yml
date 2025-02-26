@@ -36,4 +36,6 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Malintha-101_student-mgmnt-sys-backend_af8275b5-4a1c-4b3c-a095-39a350e2a231 -Dsonar.projectName='student-mgmnt-sys-backend'
+        run: 
+          cd stumgt
+          mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Malintha-101_student-mgmnt-sys-backend_af8275b5-4a1c-4b3c-a095-39a350e2a231 -Dsonar.projectName='student-mgmnt-sys-backend'

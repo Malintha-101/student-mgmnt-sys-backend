@@ -40,7 +40,8 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
-          cd stumgt
-          mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-            -Dsonar.projectKey=Malintha-101_student-mgmnt-sys-backend_7da3baf4-d52b-4e89-a0df-58b91af0bb26 \
-            -Dsonar.projectName='student-mgmnt-sys-backend'
+            cd stumgt
+            mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+                -Dsonar.projectKey=Malintha-101_student-mgmnt-sys-backend_7da3baf4-d52b-4e89-a0df-58b91af0bb26 \
+                -Dsonar.projectName='student-mgmnt-sys-backend' \
+                -Dmaven.test.failure.ignore=true

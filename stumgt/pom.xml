@@ -26,29 +26,10 @@
         <tag/>
         <url/>
     </scm>
-
     <properties>
-        <java.version>17</java.version>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-        <sonar.java.binaries>target/classes</sonar.java.binaries>
-        <sonar.sources>src/main/java</sonar.sources>
-        <sonar.tests>src/test/java</sonar.tests>
-        <sonar.log.level>true</sonar.log.level>
-        <junit.version>5.8.1</junit.version>
-        <sonar.language>java</sonar.language>
-        <sonar.projectKey>Malintha-101_student-mgmnt-sys-backend_af8275b5-4a1c-4b3c-a095-39a350e2a231</sonar.projectKey>
-        <sonar.projectName>student-mgmnt-sys-backend</sonar.projectName>
+        <java.version>21</java.version>
     </properties>
-
     <dependencies>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
@@ -79,6 +60,7 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
+            <version>1.18.32</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -91,6 +73,11 @@
                 <scope>test</scope>
         </dependency> -->
         <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
             <groupId>jakarta.persistence</groupId>
             <artifactId>jakarta.persistence-api</artifactId>
         </dependency>
@@ -98,23 +85,6 @@
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.sonarsource.scanner.maven</groupId>
-                <artifactId>sonar-maven-plugin</artifactId>
-                <version>5.0.0.4389</version>
-                <configuration>
-                    <properties>
-                        <property>
-                            <name>sonar.login</name>
-                            <value>${env.SONAR_TOKEN}</value>
-                        </property>
-                        <property>
-                            <name>sonar.host.url</name>
-                            <value>${env.SONAR_HOST_URL}</value>
-                        </property>
-                    </properties>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -137,15 +107,6 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M5</version>
-                <configuration>
-                    <parallel>methods</parallel>
-                    <threadCount>4</threadCount>
                 </configuration>
             </plugin>
         </plugins>

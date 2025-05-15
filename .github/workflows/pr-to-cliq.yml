@@ -18,7 +18,7 @@ jobs:
       
       - name: Send Event Notification to Cliq
         env:
-          CLIQ_WEBHOOK_URL: https://cliq.zoho.com/company/779974041/channels/prtocliq
+          CLIQ_WEBHOOK_URL: https://cliq.zoho.com/company/779974041/api/v2/channelsbyname/prtocliq/message
         run: |
           EVENT_TYPE=""
           TITLE=""

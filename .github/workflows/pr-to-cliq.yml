@@ -11,11 +11,6 @@ jobs:
   send-to-cliq:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 2  # We need at least the current and previous commit
-      
       - name: Send Event Notification to Cliq
         env:
           CLIQ_WEBHOOK_URL: https://cliq.zoho.com/company/779974041/api/v2/channelsbyname/prtocliq/message
@@ -56,18 +51,10 @@ jobs:
           elif [ "${{ github.event_name }}" == "push" ]; then
             BRANCH_NAME="${{ github.ref }}"
             if [ "$BRANCH_NAME" == "refs/heads/main" ]; then
-              COMMIT_MESSAGE=$(git log --format=%B -n 1 ${{ github.sha }})
-              
-              if ! echo "$COMMIT_MESSAGE" | grep -qE '\(#[0-9]+\)'; then
-                PARENT_COUNT=$(git rev-list --count --parents -n 1 ${{ github.sha }} | awk '{print NF-1}')
-                
-                if [ "$PARENT_COUNT" -eq 1 ] || ! echo "$COMMIT_MESSAGE" | grep -qE 'Merge pull request #[0-9]+'; then
-                  EVENT_TYPE="🚨 Direct Push to Main Detected"
-                  AUTHOR="${{ github.actor }}"
-                  COMMIT_URL="https://github.com/${{ github.repository }}/commit/${{ github.sha }}"
-                  MESSAGE="*${EVENT_TYPE}*\n*Pushed By:* ${AUTHOR}\n*Commit:* ${COMMIT_URL}"
-                fi
-              fi
+              EVENT_TYPE="🚨 Direct Push to Main Detected"
+              AUTHOR="${{ github.actor }}"
+              COMMIT_URL="https://github.com/${{ github.repository }}/commit/${{ github.sha }}"
+              MESSAGE="*${EVENT_TYPE}*\n*Pushed By:* ${AUTHOR}\n*Commit:* ${COMMIT_URL}"
             fi
           fi
 

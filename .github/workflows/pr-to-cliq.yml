@@ -9,7 +9,7 @@ on:
 
 jobs:
   send-to-cliq:
-    runs-on: [self-hosted, on-premise]
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3

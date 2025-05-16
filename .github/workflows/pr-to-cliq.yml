@@ -55,12 +55,10 @@ jobs:
               COMMIT_MESSAGE="${{ github.event.head_commit.message }}"
 
               if ! echo "$COMMIT_MESSAGE" | grep -qE '\(#[0-9]+\)' && ! echo "$COMMIT_MESSAGE" | grep -qE 'Merge pull request #[0-9]+'; then
-                if ! echo "$COMMIT_MESSAGE" | grep -qiE '(^|\s)merge(\s|$)'; then
-                  EVENT_TYPE="🚨 Direct Push to Main Detected"
-                  AUTHOR="${{ github.actor }}"
-                  COMMIT_URL="https://github.com/${{ github.repository }}/commit/${{ github.sha }}"
-                  MESSAGE="*${EVENT_TYPE}*\n*Pushed By:* ${AUTHOR}\n*Commit:* ${COMMIT_URL}"
-                fi
+                EVENT_TYPE="🚨 Direct Push to Main Detected"
+                AUTHOR="${{ github.actor }}"
+                COMMIT_URL="https://github.com/${{ github.repository }}/commit/${{ github.sha }}"
+                MESSAGE="*${EVENT_TYPE}*\n*Pushed By:* ${AUTHOR}\n*Commit:* ${COMMIT_URL}"
               fi
             fi
           fi

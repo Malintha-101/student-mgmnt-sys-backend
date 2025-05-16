@@ -55,6 +55,7 @@ jobs:
               
               # Check if this is NOT a PR merge by looking for PR pattern (#XXXX) or "Merge pull request"
               if ! echo "$COMMIT_MESSAGE" | grep -qE '\(#[0-9]+\)' && ! echo "$COMMIT_MESSAGE" | grep -qE 'Merge pull request #[0-9]+'; then
+                # Additional check: if commit message contains "merge" or "Merge" (case insensitive) it's likely still a merge
                 if ! echo "$COMMIT_MESSAGE" | grep -qiE '(^|\s)merge(\s|$)'; then
                   EVENT_TYPE="🚨 Direct Push to Main Detected"
                   AUTHOR="${{ github.actor }}"

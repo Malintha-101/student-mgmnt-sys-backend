@@ -24,7 +24,7 @@ jobs:
           # Define a mapping of GitHub usernames to Zoho Cliq usernames/IDs
           # Format: "github_username:zoho_cliq_user_id"
           # Important: Use Zoho Cliq user IDs, not just usernames
-          REVIEWERS_MAPPING=("chathupa:878017562" "Malintha-101:100022349255" "developer1:100022349256" "developer2:100022349257")
+          REVIEWERS_MAPPING=("ChathupaSandeep:878017562" "Malintha-101:100022349255" "developer1:100022349256" "developer2:100022349257")
           
           # Function to convert GitHub username to Zoho Cliq username for proper mention
           get_cliq_username() {

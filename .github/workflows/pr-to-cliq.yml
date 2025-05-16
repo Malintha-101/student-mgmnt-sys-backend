@@ -21,11 +21,12 @@ jobs:
           AUTHOR=""
           MESSAGE=""
           
-          # Define a mapping of GitHub usernames to Zoho Cliq usernames
-          # Format: "github_username:zoho_cliq_username"
-          REVIEWERS_MAPPING=("ChathupaSandeep:Chathupa Dewasirinarayana" "developer1:dev1" "developer2:dev2")
+          # Define a mapping of GitHub usernames to Zoho Cliq usernames/IDs
+          # Format: "github_username:zoho_cliq_user_id"
+          # Important: Use Zoho Cliq user IDs, not just usernames
+          REVIEWERS_MAPPING=("chathupa:878017562" "Malintha-101:100022349255" "developer1:100022349256" "developer2:100022349257")
           
-          # Function to convert GitHub username to Zoho Cliq username with @ mention
+          # Function to convert GitHub username to Zoho Cliq username for proper mention
           get_cliq_username() {
             local github_username="$1"
             local cliq_username=""
@@ -33,7 +34,7 @@ jobs:
             for mapping in "${REVIEWERS_MAPPING[@]}"; do
               gh_user=$(echo "$mapping" | cut -d':' -f1)
               if [ "$gh_user" == "$github_username" ]; then
-                cliq_username="@$(echo "$mapping" | cut -d':' -f2)"
+                cliq_username="$(echo "$mapping" | cut -d':' -f2)"
                 break
               fi
             done
@@ -68,7 +69,7 @@ jobs:
             elif [ "${{ github.event.action }}" == "review_requested" ]; then
               EVENT_TYPE="🔎 Review Requested on Pull Request"
               GITHUB_REVIEWER="${{ github.event.requested_reviewer.login }}"
-              CLIQ_REVIEWER="<@$(get_cliq_username "$GITHUB_REVIEWER" | sed 's/@//')>"
+              CLIQ_REVIEWER=$(get_cliq_username "$GITHUB_REVIEWER")
               
               MESSAGE="*${EVENT_TYPE}*\n*Title:* ${TITLE}\n*Author:* ${AUTHOR}\n*Reviewer:* ${CLIQ_REVIEWER}\n*Link:* ${URL}"
             else
@@ -91,15 +92,16 @@ jobs:
           fi
 
           if [ ! -z "$MESSAGE" ]; then
-            # Use cat with heredoc to properly handle newlines and special characters
-            JSON_PAYLOAD=$(cat <<EOF
-            {
-              "text": "$MESSAGE"
-            }
-          EOF
-            )
-            
-            curl -X POST "$CLIQ_WEBHOOK_URL" \
-            -H "Content-Type: application/json" \
-            -d "$JSON_PAYLOAD"
+            # For standard notifications
+            if [ "${{ github.event.action }}" != "review_requested" ]; then
+              curl -X POST "$CLIQ_WEBHOOK_URL" \
+                -H "Content-Type: application/json" \
+                -d "{\"text\": \"$MESSAGE\"}"
+            # For review request notifications with mentions
+            else
+              CLIQ_REVIEWER=$(get_cliq_username "$GITHUB_REVIEWER")
+              curl -X POST "$CLIQ_WEBHOOK_URL" \
+                -H "Content-Type: application/json" \
+                -d "{\"text\": \"$MESSAGE\", \"mentions\": [{\"id\": \"$CLIQ_REVIEWER\"}]}"
+            fi
           fi

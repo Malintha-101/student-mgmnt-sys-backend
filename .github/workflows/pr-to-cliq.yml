@@ -33,7 +33,7 @@ jobs:
             for mapping in "${REVIEWERS_MAPPING[@]}"; do
               gh_user=$(echo "$mapping" | cut -d':' -f1)
               if [ "$gh_user" == "$github_username" ]; then
-                cliq_username="@[$(echo "$mapping" | cut -d':' -f2 | tr -d ' ')]"
+                cliq_username="@$(echo "$mapping" | cut -d':' -f2)"
                 break
               fi
             done
@@ -68,7 +68,7 @@ jobs:
             elif [ "${{ github.event.action }}" == "review_requested" ]; then
               EVENT_TYPE="🔎 Review Requested on Pull Request"
               GITHUB_REVIEWER="${{ github.event.requested_reviewer.login }}"
-              CLIQ_REVIEWER=$(get_cliq_username "$GITHUB_REVIEWER")
+              CLIQ_REVIEWER="<@$(get_cliq_username "$GITHUB_REVIEWER" | sed 's/@//')>"
               
               MESSAGE="*${EVENT_TYPE}*\n*Title:* ${TITLE}\n*Author:* ${AUTHOR}\n*Reviewer:* ${CLIQ_REVIEWER}\n*Link:* ${URL}"
             else

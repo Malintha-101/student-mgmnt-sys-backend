@@ -42,6 +42,7 @@ jobs:
 
             elif [ "${{ github.event.action }}" == "review_requested" ]; then
               EVENT_TYPE="🔎 Review Requested on Pull Request"
+              REVIEWER="${{ github.event.requested_reviewer.login }}"
               MESSAGE="*${EVENT_TYPE}*\n*Title:* ${TITLE}\n*Author:* ${AUTHOR}\n*Link:* ${URL}"
             else
               EVENT_TYPE="ℹ️ Unknown PR Event"

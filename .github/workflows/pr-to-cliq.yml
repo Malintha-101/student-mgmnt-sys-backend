@@ -54,6 +54,7 @@ jobs:
               COMMIT_MESSAGE="${{ github.event.head_commit.message }}"
               
               if ! echo "$COMMIT_MESSAGE" | grep -qE '\(#[0-9]+\)' && ! echo "$COMMIT_MESSAGE" | grep -qE 'Merge pull request #[0-9]+'; then
+                # Additional check: if commit message contains "merge" or "Merge" (case insensitive) it's likely still a merge
                 if ! echo "$COMMIT_MESSAGE" | grep -qiE '(^|\s)merge(\s|$)'; then
                   EVENT_TYPE="🚨 Direct Push to Main Detected"
                   AUTHOR="${{ github.actor }}"

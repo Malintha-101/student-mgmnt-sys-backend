@@ -33,7 +33,7 @@ jobs:
             for mapping in "${REVIEWERS_MAPPING[@]}"; do
               gh_user=$(echo "$mapping" | cut -d':' -f1)
               if [ "$gh_user" == "$github_username" ]; then
-                cliq_username='@["'$(echo "$mapping" | cut -d':' -f2 | tr -d ' ')'"]'
+                cliq_username="@[$(echo "$mapping" | cut -d':' -f2 | tr -d ' ')]"
                 break
               fi
             done

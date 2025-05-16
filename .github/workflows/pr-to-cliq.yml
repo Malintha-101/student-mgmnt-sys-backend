@@ -51,6 +51,7 @@ jobs:
           elif [ "${{ github.event_name }}" == "push" ]; then
             BRANCH_NAME="${{ github.ref }}"
             if [ "$BRANCH_NAME" == "refs/heads/main" ]; then
+              # Get commit message directly from the event payload
               COMMIT_MESSAGE="${{ github.event.head_commit.message }}"
               
               # Check if this is NOT a PR merge by looking for PR pattern (#XXXX) or "Merge pull request"

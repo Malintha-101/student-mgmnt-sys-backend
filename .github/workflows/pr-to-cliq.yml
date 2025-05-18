@@ -14,67 +14,71 @@ jobs:
       - name: Send Event Notification to Cliq
         env:
           CLIQ_WEBHOOK_URL: https://cliq.zoho.com/company/779974041/api/v2/channelsbyname/prtocliq/message?zapikey=1001.f9e733d0afd10db830565de7179030a3.a4d83ef0250bb0ff5135997314a39940
+          # Add a mapping of GitHub usernames to Zoho Cliq user IDs
+          GITHUB_TO_CLIQ_USERS: |
+            {
+              "ChathupaSandeep": "878017562",
+              "github-username-2": "zoho-user-id-2",
+              "malintha": "123456789"
+            }
         run: |
           EVENT_TYPE=""
           TITLE=""
           URL=""
           AUTHOR=""
           MESSAGE=""
-          
-          # Define a mapping of GitHub usernames to Zoho Cliq usernames/IDs
-          # Format: "github_username:zoho_cliq_user_id"
-          # Important: Use Zoho Cliq user IDs, not just usernames
-          REVIEWERS_MAPPING=("ChathupaSandeep:878017562" "Malintha-101:100022349255" "developer1:100022349256" "developer2:100022349257")
-          
-          # Function to convert GitHub username to Zoho Cliq username for proper mention
-          get_cliq_username() {
-            local github_username="$1"
-            local cliq_username=""
+
+          # Function to get Zoho Cliq user ID from GitHub username
+          get_cliq_user_id() {
+            github_username="$1"
+            # Extract user ID from the mapping
+            cliq_user_id=$(echo "$GITHUB_TO_CLIQ_USERS" | grep -oP "\"$github_username\":\s*\"\K[^\"]+")
+            echo "$cliq_user_id"
+          }
+
+          # Function to format a Zoho Cliq mention
+          format_cliq_mention() {
+            github_username="$1"
+            cliq_user_id=$(get_cliq_user_id "$github_username")
             
-            for mapping in "${REVIEWERS_MAPPING[@]}"; do
-              gh_user=$(echo "$mapping" | cut -d':' -f1)
-              if [ "$gh_user" == "$github_username" ]; then
-                cliq_username="$(echo "$mapping" | cut -d':' -f2)"
-                break
-              fi
-            done
-            
-            # If no mapping found, just use the GitHub username
-            if [ -z "$cliq_username" ]; then
-              cliq_username="$github_username"
+            if [ ! -z "$cliq_user_id" ]; then
+              # Format: <@user_id|display_name>
+              echo "<@$cliq_user_id|$github_username>"
+            else
+              # If no mapping exists, just use the GitHub username
+              echo "@$github_username"
             fi
-            
-            echo "$cliq_username"
           }
 
           if [ "${{ github.event_name }}" == "pull_request" ]; then
             URL="${{ github.event.pull_request.html_url }}"
             TITLE="${{ github.event.pull_request.title }}"
             AUTHOR="${{ github.event.pull_request.user.login }}"
+            AUTHOR_MENTION=$(format_cliq_mention "$AUTHOR")
 
             if [ "${{ github.event.action }}" == "opened" ]; then
               EVENT_TYPE="🚀 New Pull Request Opened"
-              MESSAGE="*${EVENT_TYPE}*\n*Title:* ${TITLE}\n*Author:* ${AUTHOR}\n*Link:* ${URL}"
+              MESSAGE="*${EVENT_TYPE}*\n*Title:* ${TITLE}\n*Author:* ${AUTHOR_MENTION}\n*Link:* ${URL}"
 
             elif [ "${{ github.event.action }}" == "closed" ]; then
               if [ "${{ github.event.pull_request.merged }}" == "true" ]; then
                 EVENT_TYPE="✅ Pull Request Merged"
                 MERGED_BY="${{ github.event.pull_request.merged_by.login }}"
-                MESSAGE="*${EVENT_TYPE}*\n*Title:* ${TITLE}\n*Author:* ${AUTHOR}\n*Merged By:* ${MERGED_BY}\n*Link:* ${URL}"
+                MERGED_BY_MENTION=$(format_cliq_mention "$MERGED_BY")
+                MESSAGE="*${EVENT_TYPE}*\n*Title:* ${TITLE}\n*Author:* ${AUTHOR_MENTION}\n*Merged By:* ${MERGED_BY_MENTION}\n*Link:* ${URL}"
               else
                 EVENT_TYPE="❌ Pull Request Closed Without Merge"
-                MESSAGE="*${EVENT_TYPE}*\n*Title:* ${TITLE}\n*Author:* ${AUTHOR}\n*Link:* ${URL}"
+                MESSAGE="*${EVENT_TYPE}*\n*Title:* ${TITLE}\n*Author:* ${AUTHOR_MENTION}\n*Link:* ${URL}"
               fi
 
             elif [ "${{ github.event.action }}" == "review_requested" ]; then
               EVENT_TYPE="🔎 Review Requested on Pull Request"
-              GITHUB_REVIEWER="${{ github.event.requested_reviewer.login }}"
-              CLIQ_REVIEWER=$(get_cliq_username "$GITHUB_REVIEWER")
-              
-              MESSAGE="*${EVENT_TYPE}*\n*Title:* ${TITLE}\n*Author:* ${AUTHOR}\n*Reviewer:* ${CLIQ_REVIEWER}\n*Link:* ${URL}"
+              REVIEWER="${{ github.event.requested_reviewer.login }}"
+              REVIEWER_MENTION=$(format_cliq_mention "$REVIEWER")
+              MESSAGE="*${EVENT_TYPE}*\n*Title:* ${TITLE}\n*Author:* ${AUTHOR_MENTION}\n*Reviewer:* ${REVIEWER_MENTION}\n*Link:* ${URL}"
             else
               EVENT_TYPE="ℹ️ Unknown PR Event"
-              MESSAGE="*${EVENT_TYPE}*\n*Title:* ${TITLE}\n*Author:* ${AUTHOR}\n*Link:* ${URL}"
+              MESSAGE="*${EVENT_TYPE}*\n*Title:* ${TITLE}\n*Author:* ${AUTHOR_MENTION}\n*Link:* ${URL}"
             fi
 
           elif [ "${{ github.event_name }}" == "push" ]; then
@@ -85,23 +89,21 @@ jobs:
               if ! echo "$COMMIT_MESSAGE" | grep -qE '\(#[0-9]+\)' && ! echo "$COMMIT_MESSAGE" | grep -qE 'Merge pull request #[0-9]+'; then
                 EVENT_TYPE="🚨 Direct Push to Main Detected"
                 AUTHOR="${{ github.actor }}"
+                AUTHOR_MENTION=$(format_cliq_mention "$AUTHOR")
                 COMMIT_URL="https://github.com/${{ github.repository }}/commit/${{ github.sha }}"
-                MESSAGE="*${EVENT_TYPE}*\n*Pushed By:* ${AUTHOR}\n*Commit:* ${COMMIT_URL}"
+                MESSAGE="*${EVENT_TYPE}*\n*Pushed By:* ${AUTHOR_MENTION}\n*Commit:* ${COMMIT_URL}"
               fi
             fi
           fi
 
           if [ ! -z "$MESSAGE" ]; then
-            # For standard notifications
-            if [ "${{ github.event.action }}" != "review_requested" ]; then
-              curl -X POST "$CLIQ_WEBHOOK_URL" \
-                -H "Content-Type: application/json" \
-                -d "{\"text\": \"$MESSAGE\"}"
-            # For review request notifications with mentions
-            else
-              CLIQ_REVIEWER=$(get_cliq_username "$GITHUB_REVIEWER")
-              curl -X POST "$CLIQ_WEBHOOK_URL" \
-                -H "Content-Type: application/json" \
-                -d "{\"text\": \"$MESSAGE\", \"mentions\": [{\"id\": \"$CLIQ_REVIEWER\"}]}"
-            fi
+            # Using jq to properly escape the JSON
+            echo "$MESSAGE" > message.txt
+            MESSAGE_JSON=$(jq -Rs '.' < message.txt)
+            
+            curl -X POST "$CLIQ_WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -d "{
+                  \"text\": ${MESSAGE_JSON}
+                }"
           fi

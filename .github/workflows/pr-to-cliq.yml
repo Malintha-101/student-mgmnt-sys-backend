@@ -14,6 +14,14 @@ jobs:
       - name: Send Event Notification to Cliq
         env:
           CLIQ_WEBHOOK_URL: https://cliq.zoho.com/company/779974041/api/v2/channelsbyname/prtocliq/message?zapikey=1001.f9e733d0afd10db830565de7179030a3.a4d83ef0250bb0ff5135997314a39940
+          # GitHub username to Zoho Cliq email mapping
+          GH_CLIQ_MAPPING: |
+            {
+              "ChathupaSandeep": "chathupa.dewasirinarayana@revocaresolutions.com",
+              "github-user2": "zoho-email2@example.com", 
+              "octocat": "octocat@zoho.com",
+              "developer-john": "john.dev@company.com"
+            }
         run: |
           EVENT_TYPE=""
           TITLE=""
@@ -43,7 +51,18 @@ jobs:
             elif [ "${{ github.event.action }}" == "review_requested" ]; then
               EVENT_TYPE="🔎 Review Requested on Pull Request"
               REVIEWER="${{ github.event.requested_reviewer.login }}"
-              MESSAGE="*${EVENT_TYPE}*\n*Title:* ${TITLE}\n*Author:* ${AUTHOR}\n*Link:* ${URL}"
+              
+              # Look up the reviewer's Zoho Cliq email from our mapping
+              REVIEWER_JSON=$(echo "$GH_CLIQ_MAPPING" | jq -r --arg user "$REVIEWER" '.[$user] // ""')
+              
+              if [ ! -z "$REVIEWER_JSON" ]; then
+                # We found a mapping for this GitHub user
+                MESSAGE="*${EVENT_TYPE}*\n*Title:* ${TITLE}\n*Author:* ${AUTHOR}\n*Reviewer:* {@$REVIEWER_JSON}\n*Link:* ${URL}"
+              else
+                # No mapping found, just use the GitHub username
+                MESSAGE="*${EVENT_TYPE}*\n*Title:* ${TITLE}\n*Author:* ${AUTHOR}\n*Reviewer:* ${REVIEWER} (Please review)\n*Link:* ${URL}"
+              fi
+
             else
               EVENT_TYPE="ℹ️ Unknown PR Event"
               MESSAGE="*${EVENT_TYPE}*\n*Title:* ${TITLE}\n*Author:* ${AUTHOR}\n*Link:* ${URL}"

@@ -14,13 +14,7 @@ jobs:
       - name: Send Event Notification to Cliq
         env:
           CLIQ_WEBHOOK_URL: https://cliq.zoho.com/company/779974041/api/v2/channelsbyname/prtocliq/message?zapikey=1001.f9e733d0afd10db830565de7179030a3.a4d83ef0250bb0ff5135997314a39940
-          GITHUB_CLIQ_MAPPING: |
-            {
-              "ChathupaSandeep": "chathupa.dewasirinarayana@revocaresolutions.com",
-              "github-user2": "zoho-email2@example.com", 
-              "octocat": "octocat@zoho.com",
-              "developer-john": "john.dev@company.com"
-            }
+          GITHUB_CLIQ_MAPPING: ${{ vars.GIT_CLIQ_MAPPING }}
         run: |
           EVENT_TYPE=""
           TITLE=""

@@ -138,7 +138,7 @@ jobs:
               if [ ! -z "$REVIEWER_EMAIL" ]; then
                 MENTION_PAYLOAD=$(cat <<EOF
           {
-            "text": "@${REVIEWER_EMAIL} - You have a new review request!"
+            "text": "{@$REVIEWER_EMAIL} - You have a new review request!"
           }
           EOF
                 )

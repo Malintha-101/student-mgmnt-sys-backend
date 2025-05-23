@@ -20,8 +20,8 @@ jobs:
           TITLE=""
           URL=""
           AUTHOR=""
-          CARD_PAYLOAD=""
           MESSAGE=""
+          CARD_PAYLOAD=""
 
           if [ "${{ github.event_name }}" == "pull_request" ]; then
             URL="${{ github.event.pull_request.html_url }}"

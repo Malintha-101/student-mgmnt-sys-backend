@@ -184,7 +184,7 @@ jobs:
 
                 CARD_PAYLOAD=$(cat <<EOF
           {
-            "text": "⚠️ ALERT: Direct push to main branch detected!",
+            "text": "*⚠️ ALERT: Direct push to main branch detected!*",
             "bot": {
               "name": "GitHub Security Bot",
               "image": "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
@@ -195,14 +195,11 @@ jobs:
             "slides": [
               {
                 "type": "list",
-                "title": "Direct Push Alert",
+                "title": "Direct Push Details",
                 "data": [
-                  "🚨 Event: Direct Push to Main Branch",
-                  "👤 Pushed By: ${AUTHOR}",
-                  "💬 Commit: ${SHORT_SHA}",
                   "📝 Message: ${COMMIT_MESSAGE}",
+                  "👤 *Pushed By:* ${AUTHOR}",
                   "🔗 Link: ${COMMIT_URL}",
-                  "⏰ Time: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
                 ]
               }
             ]

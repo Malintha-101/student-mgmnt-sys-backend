@@ -193,7 +193,7 @@ jobs:
                 "type": "list",
                 "title": "Direct Push Details",
                 "data": [
-                  "📝 Message: ${COMMIT_MESSAGE}",
+                  "📝 *Title:* ${COMMIT_MESSAGE}",
                   "👤 *Pushed By:* ${AUTHOR}",
                   "🔗 Link: ${COMMIT_URL}",
                 ]

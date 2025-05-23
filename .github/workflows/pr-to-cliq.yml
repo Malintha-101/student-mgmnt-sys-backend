@@ -30,34 +30,34 @@ jobs:
             if [ "${{ github.event.action }}" == "opened" ]; then
               EVENT_TYPE="🚀 New Pull Request Opened"
               CARD_PAYLOAD=$(cat <<EOF
-          {
-            "text": "*${EVENT_TYPE}*",
-            "card": {
-              "theme": "modern-inline"
-            },
-            "slides": [
-              {
-                "type": "list",
-                "title": "Pull Request Details",
-                "data": [
-                  "📋 *Title:* ${TITLE}",
-                  "👤 *Author:* ${AUTHOR}"
-                ]
-              }
-            ],
-            "buttons": [
-              {
-                "label": "Open PR",
-                "action": {
-                  "type": "open.url",
-                  "data": {
-                    "web": "${URL}"
-                  }
+                {
+                  "text": "*${EVENT_TYPE}*",
+                  "card": {
+                    "theme": "modern-inline"
+                  },
+                  "slides": [
+                    {
+                      "type": "list",
+                      "title": "Pull Request Details",
+                      "data": [
+                        "📋 *Title:* ${TITLE}",
+                        "👤 *Author:* ${AUTHOR}"
+                      ]
+                    }
+                  ],
+                  "buttons": [
+                    {
+                      "label": "Open PR",
+                      "action": {
+                        "type": "open.url",
+                        "data": {
+                          "web": "${URL}"
+                        }
+                      }
+                    }
+                  ]
                 }
-              }
-            ]
-          }
-          EOF
+                EOF
               )
 
             elif [ "${{ github.event.action }}" == "closed" ]; then
@@ -65,67 +65,67 @@ jobs:
                 EVENT_TYPE="✅ Pull Request Merged"
                 MERGED_BY="${{ github.event.pull_request.merged_by.login }}"
                 CARD_PAYLOAD=$(cat <<EOF
-          {
-            "text": "*${EVENT_TYPE}*",
-            "card": {
-              "theme": "modern-inline"
-            },
-            "slides": [
-              {
-                "type": "list",
-                "title": "Merge Details",
-                "data": [
-                  "📋 *Title:* ${TITLE}",
-                  "👤 *Author:* ${AUTHOR}",
-                  "🔀 *Merged By:* ${MERGED_BY}"
-                ]
-              }
-            ],
-            "buttons": [
-              {
-                "label": "View PR",
-                "action": {
-                  "type": "open.url",
-                  "data": {
-                    "web": "${URL}"
+                  {
+                    "text": "*${EVENT_TYPE}*",
+                    "card": {
+                      "theme": "modern-inline"
+                    },
+                    "slides": [
+                      {
+                        "type": "list",
+                        "title": "Merge Details",
+                        "data": [
+                          "📋 *Title:* ${TITLE}",
+                          "👤 *Author:* ${AUTHOR}",
+                          "🔀 *Merged By:* ${MERGED_BY}"
+                        ]
+                      }
+                    ],
+                    "buttons": [
+                      {
+                        "label": "View PR",
+                        "action": {
+                          "type": "open.url",
+                          "data": {
+                            "web": "${URL}"
+                          }
+                        }
+                      }
+                    ]
                   }
-                }
-              }
-            ]
-          }
-          EOF
+                  EOF
                 )
               else
                 EVENT_TYPE="❌ Pull Request Closed Without Merge"
                 CARD_PAYLOAD=$(cat <<EOF
-          {
-            "text": "*${EVENT_TYPE}*",
-            "card": {
-              "theme": "modern-inline"
-            },
-            "slides": [
-              {
-                "type": "list",
-                "title": "Closure Details",
-                "data": [
-                  "📋 *Title:* ${TITLE}",
-                  "👤 *Author:* ${AUTHOR}"
-                ]
-              }
-            ],
-            "buttons": [
-              {
-                "label": "View PR",
-                "action": {
-                  "type": "open.url",
-                  "data": {
-                    "web": "${URL}"
+                  {
+                    "text": "*${EVENT_TYPE}*",
+                    "card": {
+                      "theme": "modern-inline"
+                    },
+                    "slides": [
+                      {
+                        "type": "list",
+                        "title": "Closure Details",
+                        "data": [
+                          "📋 *Title:* ${TITLE}",
+                          "👤 *Author:* ${AUTHOR}"
+                        ]
+                      }
+                    ],
+                    "buttons": [
+                      {
+                        "label": "View PR",
+                        "action": {
+                          "type": "open.url",
+                          "data": {
+                            "web": "${URL}"
+                          }
+                        }
+                      }
+                    ]
                   }
-                }
-              }
-            ]
-          }
-          EOF
+                  EOF
                 )
               fi
 
@@ -133,87 +133,83 @@ jobs:
               EVENT_TYPE="🔎 Review Requested on Pull Request"
               REVIEWER="${{ github.event.requested_reviewer.login }}"
               REVIEWER_EMAIL=$(echo "$GITHUB_CLIQ_MAPPING" | jq -r --arg user "$REVIEWER" '.[$user] // ""')
-              
+
               # Send mention message first if reviewer email is found
               if [ ! -z "$REVIEWER_EMAIL" ]; then
                 MENTION_PAYLOAD=$(cat <<EOF
-          {
-            "text": "{@$REVIEWER_EMAIL} - You have a new review request!"
-          }
-          EOF
-                )
-                
+                  {
+                    "text": "{@$REVIEWER_EMAIL} - You have a new review request!"
+                  }
+                  EOF
+                )        
                 echo "Sending mention notification..."
                 curl -X POST "$CLIQ_WEBHOOK_URL" \
                 -H "Content-Type: application/json" \
                 -d "$MENTION_PAYLOAD"
-                
-                # Small delay to ensure proper message order
-                sleep 1
               fi
 
               CARD_PAYLOAD=$(cat <<EOF
-          {
-            "text": "*${EVENT_TYPE}*",
-            "card": {
-              "theme": "modern-inline"
-            },
-            "slides": [
-              {
-                "type": "list",
-                "title": "Review Request Details",
-                "data": [
-                  "📋 *Title:* ${TITLE}",
-                  "👤 *Author:* ${AUTHOR}"
-                ]
-              }
-            ],
-            "buttons": [
-              {
-                "label": "Review PR",
-                "action": {
-                  "type": "open.url",
-                  "data": {
-                    "web": "${URL}"
-                  }
+                {
+                  "text": "*${EVENT_TYPE}*",
+                  "card": {
+                    "theme": "modern-inline"
+                  },
+                  "slides": [
+                    {
+                      "type": "list",
+                      "title": "Review Request Details",
+                      "data": [
+                        "📋 *Title:* ${TITLE}",
+                        "👤 *Author:* ${AUTHOR}"
+                      ]
+                    }
+                  ],
+                  "buttons": [
+                    {
+                      "label": "Review PR",
+                      "action": {
+                        "type": "open.url",
+                        "data": {
+                          "web": "${URL}"
+                        }
+                      }
+                    }
+                  ]
                 }
-              }
-            ]
-          }
-          EOF
+                EOF
               )
 
             else
               EVENT_TYPE="ℹ️ Unknown PR Event"
               CARD_PAYLOAD=$(cat <<EOF
-          {
-            "text": "*${EVENT_TYPE}*",
-            "card": {
-              "theme": "modern-inline"
-            },
-            "slides": [
-              {
-                "type": "list",
-                "title": "Event Details",
-                "data": [
-                  "📋 *Title:* ${TITLE}",
-                  "👤 *Author:* ${AUTHOR}"
-                ]
-              }
-            ],
-            "buttons": [
-              {
-                "label": "View PR",
-                "action": {
-                  "type": "open.url",
-                  "data": {
-                    "web": "${URL}"
-                  }
+                {
+                  "text": "*${EVENT_TYPE}*",
+                  "card": {
+                    "theme": "modern-inline"
+                  },
+                  "slides": [
+                    {
+                      "type": "list",
+                      "title": "Event Details",
+                      "data": [
+                        "📋 *Title:* ${TITLE}",
+                        "👤 *Author:* ${AUTHOR}"
+                      ]
+                    }
+                  ],
+                  "buttons": [
+                    {
+                      "label": "View PR",
+                      "action": {
+                        "type": "open.url",
+                        "data": {
+                          "web": "${URL}"
+                        }
+                      }
+                    }
+                  ]
                 }
-              }
-            ]
-          }
-          EOF
+                EOF
               )
             fi
 
@@ -230,34 +226,34 @@ jobs:
                 SHORT_SHA="${SHORT_SHA:0:7}"
 
                 CARD_PAYLOAD=$(cat <<EOF
-          {
-            "text": "*⚠️ ALERT: ${EVENT_TYPE}*",
-            "card": {
-              "theme": "modern-inline"
-            },
-            "slides": [
-              {
-                "type": "list",
-                "title": "Direct Push Details",
-                "data": [
-                  "📝 *Title:* ${COMMIT_MESSAGE}",
-                  "👤 *Pushed By:* ${AUTHOR}"
-                ]
-              }
-            ],
-            "buttons": [
-              {
-                "label": "View Commit",
-                "action": {
-                  "type": "open.url",
-                  "data": {
-                    "web": "${COMMIT_URL}"
+                  {
+                    "text": "*⚠️ ALERT: ${EVENT_TYPE}*",
+                    "card": {
+                      "theme": "modern-inline"
+                    },
+                    "slides": [
+                      {
+                        "type": "list",
+                        "title": "Direct Push Details",
+                        "data": [
+                          "📝 *Title:* ${COMMIT_MESSAGE}",
+                          "👤 *Pushed By:* ${AUTHOR}"
+                        ]
+                      }
+                    ],
+                    "buttons": [
+                      {
+                        "label": "View Commit",
+                        "action": {
+                          "type": "open.url",
+                          "data": {
+                            "web": "${COMMIT_URL}"
+                          }
+                        }
+                      }
+                    ]
                   }
-                }
-              }
-            ]
-          }
-          EOF
+                  EOF
                 )
               fi
             fi

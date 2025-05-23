@@ -142,7 +142,7 @@ jobs:
 
               CARD_PAYLOAD=$(cat <<EOF
           {
-            "text": "*${EVENT_TYPE}*",
+            "text": "*${EVENT_TYPE}* - @${REVIEWER_EMAIL}",
             "card": {
               "theme": "modern-inline"
             },

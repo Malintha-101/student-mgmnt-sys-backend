@@ -10,7 +10,7 @@ on:
 jobs:
   send-to-cliq:
     runs-on: ubuntu-latest
-    steps:      
+    steps:
       - name: Send Event Notification to Cliq
         env:
           CLIQ_WEBHOOK_URL: https://cliq.zoho.com/company/779974041/api/v2/channelsbyname/prtocliq/message?zapikey=1001.f9e733d0afd10db830565de7179030a3.a4d83ef0250bb0ff5135997314a39940
@@ -20,7 +20,7 @@ jobs:
           TITLE=""
           URL=""
           AUTHOR=""
-          MESSAGE=""
+          CARD_PAYLOAD=""
 
           if [ "${{ github.event_name }}" == "pull_request" ]; then
             URL="${{ github.event.pull_request.html_url }}"
@@ -29,31 +29,145 @@ jobs:
 
             if [ "${{ github.event.action }}" == "opened" ]; then
               EVENT_TYPE="🚀 New Pull Request Opened"
-              MESSAGE="*${EVENT_TYPE}*\n*Title:* ${TITLE}\n*Author:* ${AUTHOR}\n*Link:* ${URL}"
+              CARD_PAYLOAD=$(cat <<EOF
+          {
+            "text": "New Pull Request has been opened! Here are the details:",
+            "card": {
+              "theme": "modern-inline"
+            },
+            "slides": [
+              {
+                "type": "list",
+                "title": "Pull Request Details",
+                "data": [
+                  "📋 Title: ${TITLE}",
+                  "👤 Author: ${AUTHOR}",
+                  "🔗 Link: ${URL}",
+                  "📅 Status: Opened",
+                  "⏰ Time: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
+                ]
+              }
+            ]
+          }
+          EOF
+              )
 
             elif [ "${{ github.event.action }}" == "closed" ]; then
               if [ "${{ github.event.pull_request.merged }}" == "true" ]; then
                 EVENT_TYPE="✅ Pull Request Merged"
                 MERGED_BY="${{ github.event.pull_request.merged_by.login }}"
-                MESSAGE="*${EVENT_TYPE}*\n*Title:* ${TITLE}\n*Author:* ${AUTHOR}\n*Merged By:* ${MERGED_BY}\n*Link:* ${URL}"
+                CARD_PAYLOAD=$(cat <<EOF
+          {
+            "text": "Pull Request has been successfully merged! 🎉",
+            "card": {
+              "theme": "modern-inline"
+            },
+            "slides": [
+              {
+                "type": "list",
+                "title": "Merge Details",
+                "data": [
+                  "📋 Title: ${TITLE}",
+                  "👤 Author: ${AUTHOR}",
+                  "🔀 Merged By: ${MERGED_BY}",
+                  "🔗 Link: ${URL}",
+                  "✅ Status: Merged Successfully",
+                  "⏰ Time: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
+                ]
+              }
+            ]
+          }
+          EOF
+                )
               else
                 EVENT_TYPE="❌ Pull Request Closed Without Merge"
-                MESSAGE="*${EVENT_TYPE}*\n*Title:* ${TITLE}\n*Author:* ${AUTHOR}\n*Link:* ${URL}"
+                CARD_PAYLOAD=$(cat <<EOF
+          {
+            "text": "Pull Request was closed without merging.",
+            "card": {
+              "theme": "modern-inline"
+            },
+            "slides": [
+              {
+                "type": "list",
+                "title": "Closure Details",
+                "data": [
+                  "📋 Title: ${TITLE}",
+                  "👤 Author: ${AUTHOR}",
+                  "🔗 Link: ${URL}",
+                  "❌ Status: Closed Without Merge",
+                  "⏰ Time: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
+                ]
+              }
+            ]
+          }
+          EOF
+                )
               fi
 
             elif [ "${{ github.event.action }}" == "review_requested" ]; then
               EVENT_TYPE="🔎 Review Requested on Pull Request"
               REVIEWER="${{ github.event.requested_reviewer.login }}"
               REVIEWER_EMAIL=$(echo "$GITHUB_CLIQ_MAPPING" | jq -r --arg user "$REVIEWER" '.[$user] // ""')
+              
               if [ ! -z "$REVIEWER_EMAIL" ]; then
-                MESSAGE="*${EVENT_TYPE}*\n*Title:* ${TITLE}\n*Author:* ${AUTHOR}\n*Reviewer:* {@$REVIEWER_EMAIL}\n*Link:* ${URL}"
+                REVIEWER_MENTION="@$REVIEWER_EMAIL"
               else
-                MESSAGE="*${EVENT_TYPE}*\n*Title:* ${TITLE}\n*Author:* ${AUTHOR}\n*Reviewer:* ${REVIEWER} (Please review)\n*Link:* ${URL}"
+                REVIEWER_MENTION="$REVIEWER (Please review)"
               fi
+
+              CARD_PAYLOAD=$(cat <<EOF
+          {
+            "text": "Review has been requested on a Pull Request! 👀",
+            "card": {
+              "theme": "modern-inline"
+            },
+            "slides": [
+              {
+                "type": "list",
+                "title": "Review Request Details",
+                "data": [
+                  "📋 Title: ${TITLE}",
+                  "👤 Author: ${AUTHOR}",
+                  "👁️ Reviewer: ${REVIEWER_MENTION}",
+                  "🔗 Link: ${URL}",
+                  "🔍 Status: Review Requested",
+                  "⏰ Time: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
+                ]
+              }
+            ]
+          }
+          EOF
+              )
 
             else
               EVENT_TYPE="ℹ️ Unknown PR Event"
-              MESSAGE="*${EVENT_TYPE}*\n*Title:* ${TITLE}\n*Author:* ${AUTHOR}\n*Link:* ${URL}"
+              CARD_PAYLOAD=$(cat <<EOF
+          {
+            "text": "Unknown Pull Request event occurred.",
+            "bot": {
+              "name": "GitHub Bot",
+              "image": "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
+            },
+            "card": {
+              "theme": "modern-inline"
+            },
+            "slides": [
+              {
+                "type": "list",
+                "title": "Event Details",
+                "data": [
+                  "📋 Title: ${TITLE}",
+                  "👤 Author: ${AUTHOR}",
+                  "🔗 Link: ${URL}",
+                  "❓ Status: Unknown Event",
+                  "⏰ Time: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
+                ]
+              }
+            ]
+          }
+          EOF
+              )
             fi
 
           elif [ "${{ github.event_name }}" == "push" ]; then
@@ -65,15 +179,43 @@ jobs:
                 EVENT_TYPE="🚨 Direct Push to Main Detected"
                 AUTHOR="${{ github.actor }}"
                 COMMIT_URL="https://github.com/${{ github.repository }}/commit/${{ github.sha }}"
-                MESSAGE="*${EVENT_TYPE}*\n*Pushed By:* ${AUTHOR}\n*Commit:* ${COMMIT_URL}"
+                SHORT_SHA="${{ github.sha }}"
+                SHORT_SHA="${SHORT_SHA:0:7}"
+
+                CARD_PAYLOAD=$(cat <<EOF
+          {
+            "text": "⚠️ ALERT: Direct push to main branch detected!",
+            "bot": {
+              "name": "GitHub Security Bot",
+              "image": "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
+            },
+            "card": {
+              "theme": "modern-inline"
+            },
+            "slides": [
+              {
+                "type": "list",
+                "title": "Direct Push Alert",
+                "data": [
+                  "🚨 Event: Direct Push to Main Branch",
+                  "👤 Pushed By: ${AUTHOR}",
+                  "💬 Commit: ${SHORT_SHA}",
+                  "📝 Message: ${COMMIT_MESSAGE}",
+                  "🔗 Link: ${COMMIT_URL}",
+                  "⏰ Time: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
+                ]
+              }
+            ]
+          }
+          EOF
+                )
               fi
             fi
           fi
 
-          if [ ! -z "$MESSAGE" ]; then
+          if [ ! -z "$CARD_PAYLOAD" ]; then
+            echo "Sending notification to Cliq..."
             curl -X POST "$CLIQ_WEBHOOK_URL" \
             -H "Content-Type: application/json" \
-            -d "{
-                  \"text\": \"$MESSAGE\"
-                }"
+            -d "$CARD_PAYLOAD"
           fi

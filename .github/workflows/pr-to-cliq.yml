@@ -185,10 +185,6 @@ jobs:
                 CARD_PAYLOAD=$(cat <<EOF
           {
             "text": "*⚠️ ALERT: Direct push to main branch detected!*",
-            "bot": {
-              "name": "GitHub Security Bot",
-              "image": "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
-            },
             "card": {
               "theme": "modern-inline"
             },

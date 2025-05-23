@@ -51,7 +51,9 @@ jobs:
                 "type": "+",
                 "action": {
                   "type": "open.url",
-                  "url": "${URL}"
+                  "data": {
+                    "web": "${URL}"
+                  }
                 }
               }
             ]
@@ -86,7 +88,9 @@ jobs:
                 "type": "+",
                 "action": {
                   "type": "open.url",
-                  "url": "${URL}"
+                  "data": {
+                    "web": "${URL}"
+                  }
                 }
               }
             ]
@@ -117,7 +121,9 @@ jobs:
                 "type": "0",
                 "action": {
                   "type": "open.url",
-                  "url": "${URL}"
+                  "data": {
+                    "web": "${URL}"
+                  }
                 }
               }
             ]
@@ -160,7 +166,9 @@ jobs:
                 "type": "+",
                 "action": {
                   "type": "open.url",
-                  "url": "${URL}"
+                  "data": {
+                    "web": "${URL}"
+                  }
                 }
               }
             ]
@@ -192,7 +200,9 @@ jobs:
                 "type": "0",
                 "action": {
                   "type": "open.url",
-                  "url": "${URL}"
+                  "data": {
+                    "web": "${URL}"
+                  }
                 }
               }
             ]
@@ -232,7 +242,6 @@ jobs:
             "buttons": [
               {
                 "label": "View Commit",
-                "type": "-",
                 "action": {
                   "type": "open.url",
                   "data": {

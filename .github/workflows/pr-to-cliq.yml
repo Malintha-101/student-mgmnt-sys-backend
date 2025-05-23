@@ -48,7 +48,6 @@ jobs:
             "buttons": [
               {
                 "label": "Open PR",
-                "type": "+",
                 "action": {
                   "type": "open.url",
                   "data": {
@@ -85,7 +84,6 @@ jobs:
             "buttons": [
               {
                 "label": "View PR",
-                "type": "+",
                 "action": {
                   "type": "open.url",
                   "data": {
@@ -118,7 +116,6 @@ jobs:
             "buttons": [
               {
                 "label": "View PR",
-                "type": "0",
                 "action": {
                   "type": "open.url",
                   "data": {
@@ -156,14 +153,13 @@ jobs:
                 "data": [
                   "📋 *Title:* ${TITLE}",
                   "👤 *Author:* ${AUTHOR}",
-                  "👁️ *Reviewer:* ${REVIEWER_MENTION}"
+                  "👁️ *Reviewer:* {REVIEWER_MENTION}"
                 ]
               }
             ],
             "buttons": [
               {
                 "label": "Review PR",
-                "type": "+",
                 "action": {
                   "type": "open.url",
                   "data": {
@@ -197,7 +193,6 @@ jobs:
             "buttons": [
               {
                 "label": "View PR",
-                "type": "0",
                 "action": {
                   "type": "open.url",
                   "data": {

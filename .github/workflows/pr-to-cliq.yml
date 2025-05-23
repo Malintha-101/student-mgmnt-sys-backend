@@ -235,7 +235,9 @@ jobs:
                 "type": "-",
                 "action": {
                   "type": "open.url",
-                  "url": "${COMMIT_URL}"
+                  "data": {
+                    "url": "${COMMIT_URL}"
+                  }
                 }
               }
             ]

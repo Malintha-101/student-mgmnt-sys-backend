@@ -134,11 +134,10 @@ jobs:
               EVENT_TYPE="🔎 Review Requested on Pull Request"
               REVIEWER="${{ github.event.requested_reviewer.login }}"
               REVIEWER_EMAIL=$(echo "$GITHUB_CLIQ_MAPPING" | jq -r --arg user "$REVIEWER" '.[$user] // ""')
-              
               if [ ! -z "$REVIEWER_EMAIL" ]; then
-                MESSAGE="*Reviewer:* {@$REVIEWER_EMAIL}\n"
+                MESSAGE="*${EVENT_TYPE}*\n*Title:* ${TITLE}\n*Author:* ${AUTHOR}\n*Reviewer:* {@$REVIEWER_EMAIL}\n*Link:* ${URL}"
               else
-                MESSAGE="*Reviewer:* ${REVIEWER} (Please review)\n*"
+                MESSAGE="*${EVENT_TYPE}*\n*Title:* ${TITLE}\n*Author:* ${AUTHOR}\n*Reviewer:* ${REVIEWER} (Please review)\n*Link:* ${URL}"
               fi
 
               CARD_PAYLOAD=$(cat <<EOF

@@ -230,34 +230,34 @@ jobs:
                 SHORT_SHA="${SHORT_SHA:0:7}"
 
                 CARD_PAYLOAD=$(cat <<EOF
-          {
-            "text": "*⚠️ ALERT: ${EVENT_TYPE}*",
-            "card": {
-              "theme": "modern-inline"
-            },
-            "slides": [
-              {
-                "type": "list",
-                "title": "Direct Push Details",
-                "data": [
-                  "📝 *Title:* ${COMMIT_MESSAGE}",
-                  "👤 *Pushed By:* ${AUTHOR}"
-                ]
-              }
-            ],
-            "buttons": [
-              {
-                "label": "View Commit",
-                "action": {
-                  "type": "open.url",
-                  "data": {
-                    "web": "${COMMIT_URL}"
+                  {
+                    "text": "*⚠️ ALERT: ${EVENT_TYPE}*",
+                    "card": {
+                      "theme": "modern-inline"
+                    },
+                    "slides": [
+                      {
+                        "type": "list",
+                        "title": "Direct Push Details",
+                        "data": [
+                          "📝 *Title:* ${COMMIT_MESSAGE}",
+                          "👤 *Pushed By:* ${AUTHOR}"
+                        ]
+                      }
+                    ],
+                    "buttons": [
+                      {
+                        "label": "View Commit",
+                        "action": {
+                          "type": "open.url",
+                          "data": {
+                            "web": "${COMMIT_URL}"
+                          }
+                        }
+                      }
+                    ]
                   }
-                }
-              }
-            ]
-          }
-          EOF
+                  EOF
                 )
               fi
             fi

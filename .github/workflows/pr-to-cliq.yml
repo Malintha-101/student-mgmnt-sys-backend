@@ -135,7 +135,7 @@ jobs:
               REVIEWER_EMAIL=$(echo "$GITHUB_CLIQ_MAPPING" | jq -r --arg user "$REVIEWER" '.[$user] // ""')
               
               if [ ! -z "$REVIEWER_EMAIL" ]; then
-                REVIEWER_MENTION="@$REVIEWER_EMAIL"
+                REVIEWER_MENTION="{@$REVIEWER_EMAIL}"
               else
                 REVIEWER_MENTION="$REVIEWER (Please review)"
               fi
@@ -153,7 +153,7 @@ jobs:
                 "data": [
                   "📋 *Title:* ${TITLE}",
                   "👤 *Author:* ${AUTHOR}",
-                  "👁️ *Reviewer:* {REVIEWER_MENTION}"
+                  "👁️ *Reviewer:* ${REVIEWER_MENTION}"
                 ]
               }
             ],

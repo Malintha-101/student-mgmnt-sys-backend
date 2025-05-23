@@ -236,7 +236,7 @@ jobs:
                 "action": {
                   "type": "open.url",
                   "data": {
-                    "url": "${COMMIT_URL}"
+                    "web": "${COMMIT_URL}"
                   }
                 }
               }

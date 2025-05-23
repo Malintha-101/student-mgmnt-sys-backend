@@ -41,9 +41,18 @@ jobs:
                 "title": "Pull Request Details",
                 "data": [
                   "📋 *Title:* ${TITLE}",
-                  "👤 *Author:* ${AUTHOR}",
-                  "🔗 Link: ${URL}"
+                  "👤 *Author:* ${AUTHOR}"
                 ]
+              }
+            ],
+            "buttons": [
+              {
+                "label": "Open PR",
+                "type": "+",
+                "action": {
+                  "type": "open.url",
+                  "url": "${URL}"
+                }
               }
             ]
           }
@@ -67,9 +76,18 @@ jobs:
                 "data": [
                   "📋 *Title:* ${TITLE}",
                   "👤 *Author:* ${AUTHOR}",
-                  "🔀 *Merged By:* ${MERGED_BY}",
-                  "🔗 Link: ${URL}"
+                  "🔀 *Merged By:* ${MERGED_BY}"
                 ]
+              }
+            ],
+            "buttons": [
+              {
+                "label": "View PR",
+                "type": "+",
+                "action": {
+                  "type": "open.url",
+                  "url": "${URL}"
+                }
               }
             ]
           }
@@ -89,9 +107,18 @@ jobs:
                 "title": "Closure Details",
                 "data": [
                   "📋 *Title:* ${TITLE}",
-                  "👤 *Author:* ${AUTHOR}",
-                  "🔗 Link: ${URL}"
+                  "👤 *Author:* ${AUTHOR}"
                 ]
+              }
+            ],
+            "buttons": [
+              {
+                "label": "View PR",
+                "type": "0",
+                "action": {
+                  "type": "open.url",
+                  "url": "${URL}"
+                }
               }
             ]
           }
@@ -123,9 +150,18 @@ jobs:
                 "data": [
                   "📋 *Title:* ${TITLE}",
                   "👤 *Author:* ${AUTHOR}",
-                  "👁️ *Reviewer:* ${REVIEWER_MENTION}",
-                  "🔗 Link: ${URL}"
+                  "👁️ *Reviewer:* ${REVIEWER_MENTION}"
                 ]
+              }
+            ],
+            "buttons": [
+              {
+                "label": "Review PR",
+                "type": "+",
+                "action": {
+                  "type": "open.url",
+                  "url": "${URL}"
+                }
               }
             ]
           }
@@ -146,9 +182,18 @@ jobs:
                 "title": "Event Details",
                 "data": [
                   "📋 *Title:* ${TITLE}",
-                  "👤 *Author:* ${AUTHOR}",
-                  "🔗 Link: ${URL}"
+                  "👤 *Author:* ${AUTHOR}"
                 ]
+              }
+            ],
+            "buttons": [
+              {
+                "label": "View PR",
+                "type": "0",
+                "action": {
+                  "type": "open.url",
+                  "url": "${URL}"
+                }
               }
             ]
           }
@@ -180,9 +225,18 @@ jobs:
                 "title": "Direct Push Details",
                 "data": [
                   "📝 *Title:* ${COMMIT_MESSAGE}",
-                  "👤 *Pushed By:* ${AUTHOR}",
-                  "🔗 Link: ${COMMIT_URL}",
+                  "👤 *Pushed By:* ${AUTHOR}"
                 ]
+              }
+            ],
+            "buttons": [
+              {
+                "label": "View Commit",
+                "type": "-",
+                "action": {
+                  "type": "open.url",
+                  "url": "${COMMIT_URL}"
+                }
               }
             ]
           }

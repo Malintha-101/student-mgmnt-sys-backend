@@ -21,7 +21,6 @@ jobs:
           URL=""
           AUTHOR=""
           MESSAGE=""
-          CARD_PAYLOAD=""
 
           if [ "${{ github.event_name }}" == "pull_request" ]; then
             URL="${{ github.event.pull_request.html_url }}"
@@ -134,15 +133,28 @@ jobs:
               EVENT_TYPE="🔎 Review Requested on Pull Request"
               REVIEWER="${{ github.event.requested_reviewer.login }}"
               REVIEWER_EMAIL=$(echo "$GITHUB_CLIQ_MAPPING" | jq -r --arg user "$REVIEWER" '.[$user] // ""')
+              
+              # Send mention message first if reviewer email is found
               if [ ! -z "$REVIEWER_EMAIL" ]; then
-                MESSAGE="*${EVENT_TYPE}*\n*Title:* ${TITLE}\n*Author:* ${AUTHOR}\n*Reviewer:* {@$REVIEWER_EMAIL}\n*Link:* ${URL}"
-              else
-                MESSAGE="*${EVENT_TYPE}*\n*Title:* ${TITLE}\n*Author:* ${AUTHOR}\n*Reviewer:* ${REVIEWER} (Please review)\n*Link:* ${URL}"
+                MENTION_PAYLOAD=$(cat <<EOF
+          {
+            "text": "@${REVIEWER_EMAIL} - You have a new review request!"
+          }
+          EOF
+                )
+                
+                echo "Sending mention notification..."
+                curl -X POST "$CLIQ_WEBHOOK_URL" \
+                -H "Content-Type: application/json" \
+                -d "$MENTION_PAYLOAD"
+                
+                # Small delay to ensure proper message order
+                sleep 1
               fi
 
               CARD_PAYLOAD=$(cat <<EOF
           {
-            "text": "*${EVENT_TYPE}* - @${REVIEWER_EMAIL}",
+            "text": "*${EVENT_TYPE}*",
             "card": {
               "theme": "modern-inline"
             },
@@ -152,8 +164,7 @@ jobs:
                 "title": "Review Request Details",
                 "data": [
                   "📋 *Title:* ${TITLE}",
-                  "👤 *Author:* ${AUTHOR}",
-                  "👁️ *Reviewer:* ${REVIEWER_MENTION}"
+                  "👤 *Author:* ${AUTHOR}"
                 ]
               }
             ],
@@ -253,7 +264,7 @@ jobs:
           fi
 
           if [ ! -z "$CARD_PAYLOAD" ]; then
-            echo "Sending notification to Cliq..."
+            echo "Sending card notification to Cliq..."
             curl -X POST "$CLIQ_WEBHOOK_URL" \
             -H "Content-Type: application/json" \
             -d "$CARD_PAYLOAD"

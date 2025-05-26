@@ -10,6 +10,9 @@ on:
 jobs:
   send-to-cliq:
     runs-on: ubuntu-latest
+    concurrency:
+      group: send-to-cliq
+      cancel-in-progress: true
     steps:
       - name: Send Event Notification to Cliq
         env:
@@ -26,10 +29,12 @@ jobs:
             URL="${{ github.event.pull_request.html_url }}"
             TITLE="${{ github.event.pull_request.title }}"
             AUTHOR="${{ github.event.pull_request.user.login }}"
+            BRANCH_NAME="${{ github.event.pull_request.base.ref }}"
 
             if [ "${{ github.event.action }}" == "opened" ]; then
-              EVENT_TYPE="🚀 New Pull Request Opened"
-              CARD_PAYLOAD=$(cat <<EOF
+              if [ "$BRANCH_NAME" == "main" ]; then
+                EVENT_TYPE="🚀 New Pull Request Opened"
+                CARD_PAYLOAD=$(cat <<EOF
           {
             "text": "*${EVENT_TYPE}*",
             "card": {
@@ -58,13 +63,15 @@ jobs:
             ]
           }
           EOF
-              )
+                )
+              fi
 
             elif [ "${{ github.event.action }}" == "closed" ]; then
               if [ "${{ github.event.pull_request.merged }}" == "true" ]; then
-                EVENT_TYPE="✅ Pull Request Merged"
-                MERGED_BY="${{ github.event.pull_request.merged_by.login }}"
-                CARD_PAYLOAD=$(cat <<EOF
+                if [ "$BRANCH_NAME" == "main" ]; then
+                  EVENT_TYPE="✅ Pull Request Merged"
+                  MERGED_BY="${{ github.event.pull_request.merged_by.login }}"
+                  CARD_PAYLOAD=$(cat <<EOF
           {
             "text": "*${EVENT_TYPE}*",
             "card": {
@@ -94,10 +101,12 @@ jobs:
             ]
           }
           EOF
-                )
+                  )
+                fi
               else
                 EVENT_TYPE="❌ Pull Request Closed Without Merge"
-                CARD_PAYLOAD=$(cat <<EOF
+                if [ "$BRANCH_NAME" == "main" ]; then
+                  CARD_PAYLOAD=$(cat <<EOF
           {
             "text": "*${EVENT_TYPE}*",
             "card": {
@@ -126,7 +135,8 @@ jobs:
             ]
           }
           EOF
-                )
+                  )
+                fi
               fi
 
             elif [ "${{ github.event.action }}" == "review_requested" ]; then
@@ -134,24 +144,24 @@ jobs:
               REVIEWER="${{ github.event.requested_reviewer.login }}"
               REVIEWER_EMAIL=$(echo "$GITHUB_CLIQ_MAPPING" | jq -r --arg user "$REVIEWER" '.[$user] // ""')
               
-              # Send mention message first if reviewer email is found
+              # Extract zapikey from webhook URL for direct messaging
+              ZAPIKEY=$(echo "$CLIQ_WEBHOOK_URL" | grep -o 'zapikey=[^&]*' | cut -d'=' -f2)
+              
               if [ ! -z "$REVIEWER_EMAIL" ]; then
-                MENTION_PAYLOAD=$(cat <<EOF
-          {
-            "text": "{@$REVIEWER_EMAIL} - You have a new review request!"
-          }
-          EOF
-                )
+                echo "Sending review request card directly to reviewer: $REVIEWER_EMAIL"
                 
-                echo "Sending mention notification..."
-                curl -X POST "$CLIQ_WEBHOOK_URL" \
+                # Send the same card directly to the reviewer using extracted zapikey
+                echo "Sending direct message to reviewer..."
+                curl -X POST "https://cliq.zoho.com/api/v2/buddies/${REVIEWER_EMAIL}/message?zapikey=${ZAPIKEY}" \
                 -H "Content-Type: application/json" \
-                -d "$MENTION_PAYLOAD"
+                -d "$CARD_PAYLOAD"
                 
-                # Small delay to ensure proper message order
-                sleep 1
+                echo "Direct message sent to reviewer successfully"
+              else
+                echo "Warning: No email mapping found for reviewer: $REVIEWER"
               fi
 
+              # Still send to channel as well (optional - you can remove this if you only want direct messages)
               CARD_PAYLOAD=$(cat <<EOF
           {
             "text": "*${EVENT_TYPE}*",
@@ -164,7 +174,8 @@ jobs:
                 "title": "Review Request Details",
                 "data": [
                   "📋 *Title:* ${TITLE}",
-                  "👤 *Author:* ${AUTHOR}"
+                  "👤 *Author:* ${AUTHOR}",
+                  "🎯 *Reviewer:* ${REVIEWER}"
                 ]
               }
             ],
@@ -219,11 +230,11 @@ jobs:
 
           elif [ "${{ github.event_name }}" == "push" ]; then
             BRANCH_NAME="${{ github.ref }}"
-            if [ "$BRANCH_NAME" == "refs/heads/main" ]; then
+            if [ "$BRANCH_NAME" != "refs/heads/main" ]; then
               COMMIT_MESSAGE="${{ github.event.head_commit.message }}"
 
               if ! echo "$COMMIT_MESSAGE" | grep -qE '\(#[0-9]+\)' && ! echo "$COMMIT_MESSAGE" | grep -qE 'Merge pull request #[0-9]+'; then
-                EVENT_TYPE="Direct Push to Main Detected"
+                EVENT_TYPE="🚨 Direct Push to Main Detected"
                 AUTHOR="${{ github.actor }}"
                 COMMIT_URL="https://github.com/${{ github.repository }}/commit/${{ github.sha }}"
                 SHORT_SHA="${{ github.sha }}"
@@ -231,7 +242,7 @@ jobs:
 
                 CARD_PAYLOAD=$(cat <<EOF
           {
-            "text": "*⚠️ ALERT: ${EVENT_TYPE}*",
+            "text": "*${EVENT_TYPE}*",
             "card": {
               "theme": "modern-inline"
             },
@@ -263,8 +274,9 @@ jobs:
             fi
           fi
 
+          # Send to channel (if CARD_PAYLOAD is set and not empty)
           if [ ! -z "$CARD_PAYLOAD" ]; then
-            echo "Sending card notification to Cliq..."
+            echo "Sending card notification to Cliq channel..."
             curl -X POST "$CLIQ_WEBHOOK_URL" \
             -H "Content-Type: application/json" \
             -d "$CARD_PAYLOAD"

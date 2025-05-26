@@ -185,7 +185,7 @@ jobs:
                 
                 # Send the same card directly to the reviewer using extracted zapikey
                 echo "Sending direct message to reviewer..."
-                curl -X POST "https://cliq.zoho.com/api/v2/buddies/${REVIEWER_EMAIL}/message?zapikey=${ZAPIKEY}" \
+                curl -X POST "https://cliq.zoho.com/company/779974041/api/v2/buddies/${REVIEWER_EMAIL}/message?zapikey=${ZAPIKEY}" \
                 -H "Content-Type: application/json" \
                 -d "$CARD_PAYLOAD"
                 

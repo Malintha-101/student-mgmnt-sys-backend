@@ -144,7 +144,24 @@ jobs:
               REVIEWER="${{ github.event.requested_reviewer.login }}"
               REVIEWER_EMAIL=$(echo "$GITHUB_CLIQ_MAPPING" | jq -r --arg user "$REVIEWER" '.[$user] // ""')
               
-              # Create the card payload first
+              # Send mention message first if reviewer email is found
+              if [ ! -z "$REVIEWER_EMAIL" ]; then
+                MENTION_PAYLOAD=$(cat <<EOF
+          {
+            "text": "⬇️ {@$REVIEWER_EMAIL} - You have a new review request!"
+          }
+          EOF
+                )
+                
+                echo "Sending mention notification..."
+                curl -X POST "$CLIQ_WEBHOOK_URL" \
+                -H "Content-Type: application/json" \
+                -d "$MENTION_PAYLOAD"
+                
+                # Small delay to ensure proper message order
+                sleep 1
+              fi
+
               CARD_PAYLOAD=$(cat <<EOF
           {
             "text": "*${EVENT_TYPE}*",
@@ -157,8 +174,7 @@ jobs:
                 "title": "Review Request Details",
                 "data": [
                   "📋 *Title:* ${TITLE}",
-                  "👤 *Author:* ${AUTHOR}",
-                  "🎯 *Reviewer:* ${REVIEWER}"
+                  "👤 *Author:* ${AUTHOR}"
                 ]
               }
             ],
@@ -176,23 +192,6 @@ jobs:
           }
           EOF
               )
-              
-              # Extract zapikey from webhook URL for direct messaging
-              ZAPIKEY=$(echo "$CLIQ_WEBHOOK_URL" | grep -o 'zapikey=[^&]*' | cut -d'=' -f2)
-              
-              if [ ! -z "$REVIEWER_EMAIL" ]; then
-                echo "Sending review request card directly to reviewer: $REVIEWER_EMAIL"
-                
-                # Send the same card directly to the reviewer using extracted zapikey
-                echo "Sending direct message to reviewer..."
-                curl -X POST "https://cliq.zoho.com/company/779974041/api/v2/buddies/${REVIEWER_EMAIL}/message?zapikey=${ZAPIKEY}" \
-                -H "Content-Type: application/json" \
-                -d "$CARD_PAYLOAD"
-                
-                echo "Direct message sent to reviewer successfully"
-              else
-                echo "Warning: No email mapping found for reviewer: $REVIEWER"
-              fi
 
             else
               EVENT_TYPE="ℹ️ Unknown PR Event"
@@ -274,9 +273,8 @@ jobs:
             fi
           fi
 
-          # Send to channel (if CARD_PAYLOAD is set and not empty)
           if [ ! -z "$CARD_PAYLOAD" ]; then
-            echo "Sending card notification to Cliq channel..."
+            echo "Sending card notification to Cliq..."
             curl -X POST "$CLIQ_WEBHOOK_URL" \
             -H "Content-Type: application/json" \
             -d "$CARD_PAYLOAD"

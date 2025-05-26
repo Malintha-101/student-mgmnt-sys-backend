@@ -144,17 +144,51 @@ jobs:
               REVIEWER="${{ github.event.requested_reviewer.login }}"
               REVIEWER_EMAIL=$(echo "$GITHUB_CLIQ_MAPPING" | jq -r --arg user "$REVIEWER" '.[$user] // ""')
               
-              # Extract zapikey from webhook URL for direct messaging
-              ZAPIKEY=$(echo "$CLIQ_WEBHOOK_URL" | grep -o 'zapikey=[^&]*' | cut -d'=' -f2)
-              
               if [ ! -z "$REVIEWER_EMAIL" ]; then
                 echo "Sending review request card directly to reviewer: $REVIEWER_EMAIL"
                 
-                # Send the same card directly to the reviewer using extracted zapikey
+                # Extract zapikey from webhook URL
+                ZAPIKEY=$(echo "$CLIQ_WEBHOOK_URL" | grep -o 'zapikey=[^&]*' | cut -d'=' -f2)
+                
+                # Create card payload for direct message to reviewer
+                DIRECT_CARD_PAYLOAD=$(cat <<EOF
+          {
+            "text": "*🔎 New Review Request for You!*",
+            "card": {
+              "theme": "modern-inline"
+            },
+            "slides": [
+              {
+                "type": "list",
+                "title": "Review Request Details",
+                "data": [
+                  "📋 *Title:* ${TITLE}",
+                  "👤 *Author:* ${AUTHOR}",
+                  "🎯 *Requested Reviewer:* ${REVIEWER}",
+                  "🔗 *Repository:* ${{ github.repository }}"
+                ]
+              }
+            ],
+            "buttons": [
+              {
+                "label": "🔍 Review PR Now",
+                "action": {
+                  "type": "open.url",
+                  "data": {
+                    "web": "${URL}"
+                  }
+                }
+              }
+            ]
+          }
+          EOF
+                )
+                
+                # Send card directly to the reviewer using extracted zapikey
                 echo "Sending direct message to reviewer..."
                 curl -X POST "https://cliq.zoho.com/api/v2/buddies/${REVIEWER_EMAIL}/message?zapikey=${ZAPIKEY}" \
                 -H "Content-Type: application/json" \
-                -d "$CARD_PAYLOAD"
+                -d "$DIRECT_CARD_PAYLOAD"
                 
                 echo "Direct message sent to reviewer successfully"
               else

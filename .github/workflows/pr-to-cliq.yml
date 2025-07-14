@@ -39,7 +39,7 @@ jobs:
             "text": "*${EVENT_TYPE}*\n${TITLE}",
             "card": {
               "theme": "modern-inline",
-              "theme_color": "#28a745"
+              "color": "#28a745"
             },
             "slides": [
               {
@@ -75,7 +75,7 @@ jobs:
             "text": "*${EVENT_TYPE}*\n${TITLE}",
             "card": {
               "theme": "modern-inline",
-              "theme_color": "#6f42c1"
+              "color": "#6f42c1"
             },
             "slides": [
               {
@@ -109,7 +109,7 @@ jobs:
             "text": "*${EVENT_TYPE}*\n${TITLE}",
             "card": {
               "theme": "modern-inline",
-              "theme_color": "#dc3545"
+              "color": "#dc3545"
             },
             "slides": [
               {
@@ -164,7 +164,7 @@ jobs:
             "text": "*${EVENT_TYPE}*\n${TITLE}",
             "card": {
               "theme": "modern-inline",
-              "theme_color": "#ffc107"
+              "color": "#ffc107"
             },
             "slides": [
               {
@@ -196,7 +196,7 @@ jobs:
             "text": "*${EVENT_TYPE}*\n${TITLE}",
             "card": {
               "theme": "modern-inline",
-              "theme_color": "#6c757d"
+              "color": "#6c757d"
             },
             "slides": [
               {
@@ -239,7 +239,7 @@ jobs:
             "text": "*${EVENT_TYPE}*\n${COMMIT_MESSAGE}",
             "card": {
               "theme": "modern-inline",
-              "theme_color": "#fd7e14"
+              "color": "#fd7e14"
             },
             "slides": [
               {

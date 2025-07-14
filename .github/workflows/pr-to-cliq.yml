@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     concurrency:
       group: send-to-cliq
-      cancel-in-progress: true
+      cancel-in-progress: false
     steps:
       - name: Send Event Notification to Cliq
         env:

@@ -36,19 +36,11 @@ jobs:
                 EVENT_TYPE="🚀 New PR"
                 CARD_PAYLOAD=$(cat <<EOF
           {
-            "text": "*${EVENT_TYPE}*\n${TITLE}",
+            "text": "*${EVENT_TYPE}* by ${AUTHOR}\n${TITLE}",
             "card": {
               "theme": "modern-inline",
               "color": "#28a745"
             },
-            "slides": [
-              {
-                "type": "list",
-                "data": [
-                  "👤 *Author:* ${AUTHOR}"
-                ]
-              }
-            ],
             "buttons": [
               {
                 "label": "Open PR",
@@ -72,20 +64,11 @@ jobs:
                   MERGED_BY="${{ github.event.pull_request.merged_by.login }}"
                   CARD_PAYLOAD=$(cat <<EOF
           {
-            "text": "*${EVENT_TYPE}*\n${TITLE}",
+            "text": "*${EVENT_TYPE}* by ${MERGED_BY}\n${TITLE}",
             "card": {
               "theme": "modern-inline",
               "color": "#6f42c1"
             },
-            "slides": [
-              {
-                "type": "list",
-                "data": [
-                  "👤 *Author:* ${AUTHOR}",
-                  "🔀 *Merged By:* ${MERGED_BY}"
-                ]
-              }
-            ],
             "buttons": [
               {
                 "label": "View PR",
@@ -106,19 +89,11 @@ jobs:
                 if [ "$BRANCH_NAME" == "main" ]; then
                   CARD_PAYLOAD=$(cat <<EOF
           {
-            "text": "*${EVENT_TYPE}*\n${TITLE}",
+            "text": "*${EVENT_TYPE}* by ${AUTHOR}\n${TITLE}",
             "card": {
               "theme": "modern-inline",
               "color": "#dc3545"
             },
-            "slides": [
-              {
-                "type": "list",
-                "data": [
-                  "👤 *Author:* ${AUTHOR}"
-                ]
-              }
-            ],
             "buttons": [
               {
                 "label": "View PR",
@@ -161,19 +136,11 @@ jobs:
 
               CARD_PAYLOAD=$(cat <<EOF
           {
-            "text": "*${EVENT_TYPE}*\n${TITLE}",
+            "text": "*${EVENT_TYPE}* by ${AUTHOR}\n${TITLE}",
             "card": {
               "theme": "modern-inline",
               "color": "#ffc107"
             },
-            "slides": [
-              {
-                "type": "list",
-                "data": [
-                  "👤 *Author:* ${AUTHOR}"
-                ]
-              }
-            ],
             "buttons": [
               {
                 "label": "Review PR",
@@ -193,19 +160,11 @@ jobs:
               EVENT_TYPE="ℹ️ PR Event"
               CARD_PAYLOAD=$(cat <<EOF
           {
-            "text": "*${EVENT_TYPE}*\n${TITLE}",
+            "text": "*${EVENT_TYPE}* by ${AUTHOR}\n${TITLE}",
             "card": {
               "theme": "modern-inline",
               "color": "#6c757d"
             },
-            "slides": [
-              {
-                "type": "list",
-                "data": [
-                  "👤 *Author:* ${AUTHOR}"
-                ]
-              }
-            ],
             "buttons": [
               {
                 "label": "View PR",
@@ -236,19 +195,11 @@ jobs:
 
                 CARD_PAYLOAD=$(cat <<EOF
           {
-            "text": "*${EVENT_TYPE}*\n${COMMIT_MESSAGE}",
+            "text": "*${EVENT_TYPE}* by ${AUTHOR}\n${COMMIT_MESSAGE}",
             "card": {
               "theme": "modern-inline",
               "color": "#fd7e14"
             },
-            "slides": [
-              {
-                "type": "list",
-                "data": [
-                  "👤 *Pushed By:* ${AUTHOR}"
-                ]
-              }
-            ],
             "buttons": [
               {
                 "label": "View Commit",

@@ -36,7 +36,7 @@ jobs:
                 EVENT_TYPE="🚀 New PR"
                 CARD_PAYLOAD=$(cat <<EOF
           {
-            "text": "*${EVENT_TYPE}* by ${AUTHOR}\n${TITLE}",
+            "text": "*${EVENT_TYPE} by ${AUTHOR}*\n${TITLE}",
             "card": {
               "theme": "modern-inline",
               "color": "#28a745"
@@ -64,7 +64,7 @@ jobs:
                   MERGED_BY="${{ github.event.pull_request.merged_by.login }}"
                   CARD_PAYLOAD=$(cat <<EOF
           {
-            "text": "*${EVENT_TYPE}* by ${MERGED_BY}\n${TITLE}",
+            "text": "*${EVENT_TYPE} by ${MERGED_BY}*\n${TITLE}",
             "card": {
               "theme": "modern-inline",
               "color": "#6f42c1"
@@ -89,7 +89,7 @@ jobs:
                 if [ "$BRANCH_NAME" == "main" ]; then
                   CARD_PAYLOAD=$(cat <<EOF
           {
-            "text": "*${EVENT_TYPE}* by ${AUTHOR}\n${TITLE}",
+            "text": "*${EVENT_TYPE} by ${AUTHOR}*\n${TITLE}",
             "card": {
               "theme": "modern-inline",
               "color": "#dc3545"
@@ -136,7 +136,7 @@ jobs:
 
               CARD_PAYLOAD=$(cat <<EOF
           {
-            "text": "*${EVENT_TYPE}* by ${AUTHOR}\n${TITLE}",
+            "text": "*${EVENT_TYPE} by ${AUTHOR}*\n${TITLE}",
             "card": {
               "theme": "modern-inline",
               "color": "#ffc107"
@@ -160,7 +160,7 @@ jobs:
               EVENT_TYPE="ℹ️ PR Event"
               CARD_PAYLOAD=$(cat <<EOF
           {
-            "text": "*${EVENT_TYPE}* by ${AUTHOR}\n${TITLE}",
+            "text": "*${EVENT_TYPE} by ${AUTHOR}*\n${TITLE}",
             "card": {
               "theme": "modern-inline",
               "color": "#6c757d"
@@ -195,7 +195,7 @@ jobs:
 
                 CARD_PAYLOAD=$(cat <<EOF
           {
-            "text": "*${EVENT_TYPE}* by ${AUTHOR}\n${COMMIT_MESSAGE}",
+            "text": "*${EVENT_TYPE} by ${AUTHOR}*\n${COMMIT_MESSAGE}",
             "card": {
               "theme": "modern-inline",
               "color": "#fd7e14"

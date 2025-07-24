@@ -27,7 +27,7 @@ jobs:
 
           if [ "${{ github.event_name }}" == "pull_request" ]; then
             URL="${{ github.event.pull_request.html_url }}"
-            TITLE="${{ github.event.pull_request.title }}"
+            TITLE=$(echo '${{ github.event.pull_request.title }}' | sed 's/"/\\"/g' | sed "s/'/\\'/g")
             AUTHOR="${{ github.event.pull_request.user.login }}"
             BRANCH_NAME="${{ github.event.pull_request.base.ref }}"
 
